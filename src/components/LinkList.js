@@ -16,6 +16,7 @@ export default function LinkList() {
       }
     }
   `;
+  
   return (
     <Query query={FEED_QUERY}>
       {({ loading, error, data }) => {
