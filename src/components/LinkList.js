@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "./Link";
-import gql from "graphql-tag";
+import { gql } from "apollo-boost";
 import { Query } from "react-apollo";
 
 export default function LinkList() {
@@ -16,7 +16,7 @@ export default function LinkList() {
       }
     }
   `;
-  
+
   return (
     <Query query={FEED_QUERY}>
       {({ loading, error, data }) => {

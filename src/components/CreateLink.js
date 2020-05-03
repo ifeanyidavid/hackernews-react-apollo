@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import gql from "graphql-tag";
+import { gql } from "apollo-boost";
 import { Mutation } from "react-apollo";
 
 export default class CreateLink extends Component {
