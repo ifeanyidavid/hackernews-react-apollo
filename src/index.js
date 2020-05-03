@@ -17,7 +17,6 @@ const httpLink = createHttpLink({ uri: "http://localhost:4000" });
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem(AUTH_TOKEN);
-  console.log(token);
   return {
     headers: {
       ...headers,

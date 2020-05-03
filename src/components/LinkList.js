@@ -3,19 +3,36 @@ import Link from "./Link";
 import { gql } from "apollo-boost";
 import { Query } from "react-apollo";
 
-export default function LinkList() {
-  const FEED_QUERY = gql`
-    {
-      feed {
-        links {
+export const FEED_QUERY = gql`
+  {
+    feed {
+      links {
+        id
+        description
+        createdAt
+        url
+        postedBy {
           id
-          description
-          createdAt
-          url
+          name
+        }
+        votes {
+          id
+          user {
+            id
+          }
         }
       }
     }
-  `;
+  }
+`;
+export default function LinkList() {
+  const _updateCacheAfterVote = (store, createVote, linkId) => {
+    const data = store.readQuery({ query: FEED_QUERY });
+
+    const votedLink = data.feed.links.find((link) => link.id === linkId);
+    votedLink.votes = createVote.link.votes;
+    store.writeQuery({ query: FEED_QUERY, data });
+  };
 
   return (
     <Query query={FEED_QUERY}>
@@ -23,7 +40,14 @@ export default function LinkList() {
         if (loading) return <div>Fetching</div>;
         if (error) return <div>Error</div>;
         const linksToRender = data.feed.links;
-        return linksToRender.map((link) => <Link key={link.id} link={link} />);
+        return linksToRender.map((link, index) => (
+          <Link
+            key={link.id}
+            index={index}
+            link={link}
+            updateStoreAfterVote={_updateCacheAfterVote}
+          />
+        ));
       }}
     </Query>
   );

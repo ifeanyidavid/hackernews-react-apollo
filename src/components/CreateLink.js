@@ -1,6 +1,18 @@
 import React, { Component } from "react";
 import { gql } from "apollo-boost";
 import { Mutation } from "react-apollo";
+import { FEED_QUERY } from "./LinkList";
+
+export const POST_MUTATION = gql`
+  mutation PostMutation($description: String!, $url: String!) {
+    post(description: $description, url: $url) {
+      id
+      createdAt
+      url
+      description
+    }
+  }
+`;
 
 export default class CreateLink extends Component {
   state = {
@@ -9,16 +21,6 @@ export default class CreateLink extends Component {
   };
   render() {
     const { description, url } = this.state;
-    const POST_MUTATION = gql`
-      mutation PostMutation($description: String!, $url: String!) {
-        post(description: $description, url: $url) {
-          id
-          createdAt
-          url
-          description
-        }
-      }
-    `;
 
     return (
       <div>
@@ -42,6 +44,14 @@ export default class CreateLink extends Component {
           mutation={POST_MUTATION}
           variables={{ description, url }}
           onCompleted={() => this.props.history.push("/")}
+          update={(store, { data: { post } }) => {
+            const data = store.readQuery({ query: FEED_QUERY });
+            data.feed.links.unshift(post);
+            store.writeQuery({
+              query: FEED_QUERY,
+              data,
+            });
+          }}
         >
           {(postMutation) => (
             <button
